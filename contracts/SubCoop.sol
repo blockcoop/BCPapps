@@ -35,4 +35,8 @@ contract SubCoop is ERC721URIStorage {
         MintNFT(msg.sender, "Member");
         emit SubCoopJoined(msg.sender);
     }
+
+    function totalSupply() public view returns (uint256) {
+        return _tokenIds.current();
+    }
 }

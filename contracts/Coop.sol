@@ -18,7 +18,7 @@ contract Coop is ERC721URIStorage {
     string public country;
     uint32 public quorum; // 1-100
     uint32 public supermajority;
-    address[] public subCoops;
+    address[] public subCoops; // groups
 
     event CoopJoined(address indexed member);
 
@@ -56,5 +56,9 @@ contract Coop is ERC721URIStorage {
 
     function createSubCoop(string memory _name) public {
         ISubCoopFactory(subCoopFactoryAddress).createSubCoop(_name);
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return _tokenIds.current();
     }
 }
