@@ -21,7 +21,7 @@ contract Voting {
     }
 
     enum ProposalStatus {
-        Invalid,
+        Invalid, // Default
         Proposed,
         Passed,
         Failed,
@@ -54,8 +54,9 @@ contract Voting {
         status = proposal.status;
     }
 
-    function calculateVoteResult(uint proposalId) private returns (ProposalStatus) {
+    function calculateVoteResult(uint proposalId) public returns (ProposalStatus) {
         Proposal storage proposal = proposals[proposalId];
+        require(proposal.creator == msg.sender, "not allowed");
         require(proposal.votingDeadline < block.timestamp, "voting deadline not passed");
         uint memberCount = IERC721Enumerable(proposal.token).totalSupply();
         uint minVotes = memberCount * proposal.quorum;
@@ -76,6 +77,7 @@ contract Voting {
     }
 
     function createProposal(address _token, string memory _details, uint32 _votingDeadline, uint32 _quorum, uint32 _supermajority) public returns (uint256) {
+        require(IERC721Enumerable(_token).totalSupply() > 0, "invalid token");
         require(IERC721(_token).balanceOf(msg.sender) > 0, "not allowed");
         require(_votingDeadline > block.timestamp, "invalid voting deadline");
         uint256 proposalId = _proposalCount.current();
